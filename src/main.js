@@ -119,7 +119,7 @@ function onCropEvent(e) {
 	imageWidth = Math.round(data.width);
 
 	paintSettings();
-	updateContent();
+	debounce(updateContent, 500)();
 }
 
 sdk.getData(function (data) {
@@ -133,13 +133,6 @@ sdk.getData(function (data) {
 	paintSettings();
 	paintCropper();
 });
-
-/*
-document.getElementById('workspace').addEventListener("input", function () {
-	debounce(paintCropper, 500)();
-	updateContent();
-});
-*/
 
 [...document.querySelectorAll('input[name="aspectRatio"]')].forEach((button) => {
 	button.addEventListener('change', (e) => {

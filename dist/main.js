@@ -589,7 +589,7 @@ function onCropEvent(e) {
 	imageWidth = Math.round(data.width);
 
 	paintSettings();
-	updateContent();
+	debounce(updateContent, 500)();
 }
 
 sdk.getData(function (data) {
