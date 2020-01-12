@@ -1,7 +1,7 @@
 {
-  "name": "sampleblock",
+  "name": "ar-image-cropper-block",
   "version": "0.0.1",
-  "description": "Sample Salesforce Marketing Cloud Content Builder Block",
+  "description": "Image Cropper Content Block for Salesforce Marketing Cloud using cropper.js",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,21 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tbesluau/sampleblock.git"
+    "url": "git+https://github.com/art4melody/ar-image-cropper-block"
   },
-  "author": "Thomas Besluau",
+  "author": "Aries Richi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tbesluau/sampleblock/issues"
+    "url": "https://github.com/art4melody/ar-image-cropper-block/issues"
   },
-  "homepage": "https://github.com/tbesluau/sampleblock#readme",
+  "homepage": "https://github.com/art4melody/ar-image-cropper-block#readme",
   "dependencies": {
-    "@salesforce-ux/design-system": "^2.5.2",
-    "blocksdk": "^1.0.0",
-    "express": "^4.16.3"
+    "@salesforce-ux/design-system": "~2.5.2",
+    "blocksdk": "~1.0.0",
+    "cropperjs": "^1.5.6",
+    "express": "~4.16.3"
   },
   "devDependencies": {
-    "webpack": "^3.10.0",
-    "webpack-css-loaders": "^1.0.0"
+    "webpack": "~3.10.0",
+    "webpack-css-loaders": "~1.0.0"
   }
 }
