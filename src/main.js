@@ -11,7 +11,7 @@ var cropper;
 var options = {
 	aspectRatio: aspectRatio,
 	viewMode: 3,
-	crop: onCropEvent,
+	cropend: onCropEvent,
 	ready: function(e) {
 		updateContent();
 	}
