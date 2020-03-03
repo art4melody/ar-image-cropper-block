@@ -53,23 +53,25 @@ function paintSettings () {
 	document.getElementById('example-unique-id-124').setAttribute('checked', false);
 	document.getElementById('example-unique-id-125').setAttribute('checked', false);
 	document.getElementById('example-unique-id-126').setAttribute('checked', false);
-	switch (aspectRatio) {
-		case NaN:
-			document.getElementById('example-unique-id-122').checked = true;
-			break;
-		case 1.77:
-			document.getElementById('example-unique-id-123').checked = true;
-			break;
-		case 1.33:
-			document.getElementById('example-unique-id-124').checked = true;
-			break;
-		case 1:
-			document.getElementById('example-unique-id-125').checked = true;
-			break;
-		case 0.66:
-			document.getElementById('example-unique-id-126').checked = true;
-			break;
+	if (aspectRatio === null || isNaN(aspectRatio)) {
+		document.getElementById('example-unique-id-122').checked = true;
+	} else {
+		switch (aspectRatio) {
+			case 1.77:
+				document.getElementById('example-unique-id-123').checked = true;
+				break;
+			case 1.33:
+				document.getElementById('example-unique-id-124').checked = true;
+				break;
+			case 1:
+				document.getElementById('example-unique-id-125').checked = true;
+				break;
+			case 0.66:
+				document.getElementById('example-unique-id-126').checked = true;
+				break;
+		}
 	}
+	
 }
 
 function loadImage() {
