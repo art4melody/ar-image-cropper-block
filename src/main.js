@@ -104,11 +104,13 @@ function paintCropper() {
 	options.aspectRatio = aspectRatio;
 	if (cropper) cropper.destroy();
 	cropper = new Cropper(image, options);
+	var canvasData = cropper.getCanvasData();
+	var ratio = canvasData.width / canvasData.naturalWidth;
 	cropper.setCropBoxData({
 		left: x,
 		top: y,
-		width: imageWidth,
-		height: imageHeight
+		width: imageWidth * ratio,
+		height: imageHeight * ratio
 	});
 }
 
