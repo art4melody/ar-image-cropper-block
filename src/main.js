@@ -54,20 +54,20 @@ function paintSettings () {
 	document.getElementById('example-unique-id-125').setAttribute('checked', false);
 	document.getElementById('example-unique-id-126').setAttribute('checked', false);
 	switch (aspectRatio) {
-		case 'NaN':
-			document.getElementById('example-unique-id-122').setAttribute('checked', true);
+		case NaN:
+			document.getElementById('example-unique-id-122').checked = true;
 			break;
-		case '1.7777777777777777':
-			document.getElementById('example-unique-id-123').setAttribute('checked', true);
+		case 1.77:
+			document.getElementById('example-unique-id-123').checked = true;
 			break;
-		case '1.3333333333333333':
-			document.getElementById('example-unique-id-124').setAttribute('checked', true);
+		case 1.33:
+			document.getElementById('example-unique-id-124').checked = true;
 			break;
-		case '1':
-			document.getElementById('example-unique-id-125').setAttribute('checked', true);
+		case 1:
+			document.getElementById('example-unique-id-125').checked = true;
 			break;
-		case '0.6666666666666666':
-			document.getElementById('example-unique-id-126').setAttribute('checked', true);
+		case 0.66:
+			document.getElementById('example-unique-id-126').checked = true;
 			break;
 	}
 }
@@ -90,7 +90,7 @@ function loadImage() {
 function paintCropper() {
 	console.log("Loading cropper...");
 
-	aspectRatio = document.querySelector('input[name="aspectRatio"]:checked').value;
+	aspectRatio = parseFloat(document.querySelector('input[name="aspectRatio"]:checked').value);
 	x = parseInt(document.getElementById('hidden-input-id-0').value);
 	y = parseInt(document.getElementById('hidden-input-id-1').value);
 	imageWidth = parseInt(document.getElementById('input-01').value);
@@ -103,27 +103,34 @@ function paintCropper() {
 
 	options.aspectRatio = aspectRatio;
 	if (cropper) cropper.destroy();
+	
+	if (loadingFromSDK) {
+		var data = {
+			"rotate": 0,
+			"scaleX": 1,
+			"scaleY": 1,
+			"x": x,
+			"y": y,
+			"width": imageWidth,
+			"height": imageHeight
+		};
+
+		loadingFromSDK = false;
+		options.data = data;
+	}
+
 	cropper = new Cropper(image, options);
-	var canvasData = cropper.getCanvasData();
-	var ratio = canvasData.width / canvasData.naturalWidth;
-	cropper.setCropBoxData({
-		left: x,
-		top: y,
-		width: imageWidth * ratio,
-		height: imageHeight * ratio
-	});
+	console.log(options);
 }
 
 function updateContent() {
-	console.log("Updating content...");
 	var imgData = cropper.getCroppedCanvas({
 		imageSmoothingEnabled: false
 	}).toDataURL();
 	var html = '<img';
 	if (fillWidth) html += ' style="width:100%;height:auto"';
 	html += ' src="' + imgData + '" />';
-	sdk.setContent(html);
-	sdk.setData({
+	var data = {
 		imageURL: imageURL,
 		imageWidth: imageWidth,
 		imageHeight: imageHeight,
@@ -131,7 +138,12 @@ function updateContent() {
 		y: y,
 		aspectRatio: aspectRatio,
 		fillWidth: fillWidth
-	});
+	};
+	sdk.setContent(html);
+	sdk.setData(data);
+
+	console.log("Updating content...");
+	console.log(data);
 }
 
 function onZoom(e) {
@@ -173,10 +185,11 @@ function onInputChangeH(e) {
 }
 
 function onFillWidthInput(e) {
+	fillWidth = document.getElementById("checkbox-fillwidth").checked;
 	updateContent();
 }
 
-sdk.getData(function (data) {
+function processSDKData(data) {
 	console.log("Getting data from SDK:");
 	console.log(data);
 
@@ -185,18 +198,20 @@ sdk.getData(function (data) {
 	imageHeight = data.imageHeight || 0;
 	x = data.x || 0;
 	y = data.y || 0;
-	aspectRatio = data.aspectRatio || 'NaN';
+	aspectRatio = data.aspectRatio || NaN;
 	fillWidth = data.fillWidth || false;
 	document.getElementById("img-container").hidden = imageURL != '';
 
 	loadingFromSDK = true;
 	loadImage();
-});
+}
+
+sdk.getData(processSDKData);
 
 [...document.querySelectorAll('input[name="aspectRatio"]')].forEach((button) => {
 	button.addEventListener('change', (e) => {
 		var target = e.target || e.srcElement;
-		aspectRatio = options.aspectRatio = parseInt(target.value);
+		aspectRatio = options.aspectRatio = parseFloat(target.value);
 	
 		console.log('Setting aspect ratio to ' + aspectRatio);
 		cropper.setAspectRatio(aspectRatio);
@@ -213,8 +228,6 @@ image.onload = function(e) {
 	if (!loadingFromSDK) {
 		imageWidth = e.naturalWidth;
 		imageHeight = e.naturalHeight;
-	} else {
-		loadingFromSDK = false;
 	}
 
 	paintSettings();
@@ -224,3 +237,19 @@ image.onload = function(e) {
 document.getElementById('input-01').onchange = onInputChangeW;
 document.getElementById('input-02').onchange = onInputChangeH;
 document.getElementById("checkbox-fillwidth").onchange = onFillWidthInput;
+
+/*
+// TESTING
+
+var test_data = {
+	imageURL: "https://fengyuanchen.github.io/cropperjs/images/picture.jpg",
+	imageWidth: 18,
+	imageHeight: 18,
+	x: 790,
+	y: 207,
+	aspectRatio: 1,
+	fillWidth: true
+};
+
+processSDKData(test_data);
+*/
