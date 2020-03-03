@@ -708,6 +708,9 @@ document.getElementById('input-01').onchange = onInputChangeW;
 document.getElementById('input-02').onchange = onInputChangeH;
 document.getElementById("checkbox-fillwidth").onchange = onFillWidthInput;
 
+/*
+// TESTING
+
 var test_data = {
 	imageURL: "https://fengyuanchen.github.io/cropperjs/images/picture.jpg",
 	imageWidth: 18,
@@ -719,6 +722,7 @@ var test_data = {
 };
 
 processSDKData(test_data);
+*/
 
 /***/ }),
 /* 3 */
