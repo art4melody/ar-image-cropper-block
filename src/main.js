@@ -202,7 +202,7 @@ function processSDKData(data) {
 	fillWidth = data.fillWidth || false;
 	document.getElementById("img-container").hidden = imageURL != '';
 
-	loadingFromSDK = true;
+	if (imageURL) loadingFromSDK = true;
 	loadImage();
 }
 
