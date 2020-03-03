@@ -20,6 +20,7 @@ var options = {
 		updateContent();
 	}
 };
+var loadingFromSDK = false;
 
 function debounce (func, wait, immediate) {
 	var timeout;
@@ -167,6 +168,10 @@ function onInputChangeH(e) {
 	updateContent();
 }
 
+function onFillWidthInput(e) {
+	updateContent();
+}
+
 sdk.getData(function (data) {
 	console.log("Getting data from SDK:");
 	console.log(data);
@@ -180,7 +185,7 @@ sdk.getData(function (data) {
 	fillWidth = data.fillWidth || false;
 	document.getElementById("img-container").hidden = imageURL != '';
 
-	paintSettings();
+	loadingFromSDK = true;
 	loadImage();
 });
 
@@ -201,12 +206,17 @@ document.getElementById('loadImage').onclick = function (e) {
 
 image = document.getElementById('image');
 image.onload = function(e) {
-	imageWidth = e.naturalWidth;
-	imageHeight = e.naturalHeight;
-	
+	if (!loadingFromSDK) {
+		imageWidth = e.naturalWidth;
+		imageHeight = e.naturalHeight;
+	} else {
+		loadingFromSDK = false;
+	}
+
 	paintSettings();
 	paintCropper();
 };
 
 document.getElementById('input-01').onchange = onInputChangeW;
 document.getElementById('input-02').onchange = onInputChangeH;
+document.getElementById("checkbox-fillwidth").onchange = onFillWidthInput;
