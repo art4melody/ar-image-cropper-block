@@ -480,8 +480,11 @@ var image;
 var cropper;
 var options = {
 	aspectRatio: aspectRatio,
+	
 	viewMode: 3,
-	crop: onCropEvent,
+	crop: onCrop,
+	zoom: onZoom,
+	cropend: onCropEnd,
 	ready: function(e) {
 		updateContent();
 	}
@@ -536,8 +539,10 @@ function paintSettings () {
 function loadImage() {
 	imageURL = document.getElementById('text-input-id-0').value;
 	if (!imageURL) {
+		document.getElementById("img-container").hidden = true;
 		return;
 	}
+	document.getElementById("img-container").hidden = false;
 	
 	x = 0;
 	y = 0;
@@ -546,10 +551,10 @@ function loadImage() {
 
 function paintCropper() {
 	aspectRatio = document.querySelector('input[name="aspectRatio"]:checked').value;
-	x = document.getElementById('hidden-input-id-0').value;
-	y = document.getElementById('hidden-input-id-1').value;
-	imageWidth = document.getElementById('input-01').value;
-	imageHeight = document.getElementById('input-02').value;
+	x = parseInt(document.getElementById('hidden-input-id-0').value);
+	y = parseInt(document.getElementById('hidden-input-id-1').value);
+	imageWidth = parseInt(document.getElementById('input-01').value);
+	imageHeight = parseInt(document.getElementById('input-02').value);
 
 	if (!imageURL) {
 		return;
@@ -567,6 +572,7 @@ function paintCropper() {
 }
 
 function updateContent() {
+	console.log("Updating content...");
 	var imgData = cropper.getCroppedCanvas({
 		imageSmoothingEnabled: false
 	}).toDataURL();
@@ -581,7 +587,15 @@ function updateContent() {
 	});
 }
 
-function onCropEvent(e) {
+function onZoom(e) {
+	console.log("Zoom: " + ratio);
+}
+
+function onCropEnd(e) {
+	updateContent();
+}
+
+function onCrop(e) {
 	var data = e.detail;
 	x = Math.round(data.x);
 	y = Math.round(data.y);
@@ -589,7 +603,26 @@ function onCropEvent(e) {
 	imageWidth = Math.round(data.width);
 
 	paintSettings();
-	debounce(updateContent, 500)();
+}
+
+function onInputChangeW(e) {
+	imageWidth = parseInt(document.getElementById('input-01').value);
+	var cropbox = cropper.getCropBoxData();
+	var canvasData = cropper.getCanvasData();
+	var ratio = canvasData.width / canvasData.naturalWidth;
+	cropbox.width = imageWidth * ratio;
+	cropper.setCropBoxData(cropbox);
+	updateContent();
+}
+
+function onInputChangeH(e) {
+	imageHeight = parseInt(document.getElementById('input-02').value);
+	var cropbox = cropper.getCropBoxData();
+	var canvasData = cropper.getCanvasData();
+	var ratio = canvasData.width / canvasData.naturalWidth;
+	cropbox.height = imageHeight * ratio;
+	cropper.setCropBoxData(cropbox);
+	updateContent();
 }
 
 sdk.getData(function (data) {
@@ -599,22 +632,16 @@ sdk.getData(function (data) {
 	x = data.x || 0;
 	y = data.y || 0;
 	aspectRatio = data.aspectRatio || 'NaN';
+	document.getElementById("img-container").hidden = imageURL != '';
 
 	paintSettings();
 	paintCropper();
 });
 
-/*
-document.getElementById('workspace').addEventListener("input", function () {
-	debounce(paintCropper, 500)();
-	updateContent();
-});
-*/
-
 [...document.querySelectorAll('input[name="aspectRatio"]')].forEach((button) => {
 	button.addEventListener('change', (e) => {
 		var target = e.target || e.srcElement;
-		aspectRatio = options.aspectRatio = target.value;
+		aspectRatio = options.aspectRatio = parseInt(target.value);
 	
 		console.log('Setting aspect ratio to ' + aspectRatio);
 		cropper.setAspectRatio(aspectRatio);
@@ -634,6 +661,9 @@ image.onload = function(e) {
 	paintSettings();
 	paintCropper();
 };
+
+document.getElementById('input-01').onchange = onInputChangeW;
+document.getElementById('input-02').onchange = onInputChangeH;
 
 /***/ }),
 /* 3 */
