@@ -476,6 +476,7 @@ var SDK = __webpack_require__(22);
 var sdk = new SDK(null, null, true); // 3rd argument true bypassing https requirement: not prod worthy
 
 var imageURL, imageWidth, imageHeight, aspectRatio, x, y;
+var fillWidth = false;
 var image;
 var cropper;
 var options = {
@@ -506,11 +507,15 @@ function debounce (func, wait, immediate) {
 }
 
 function paintSettings () {
+	console.log("Updating UI elements");
+
 	document.getElementById('text-input-id-0').value = imageURL;
 	document.getElementById('hidden-input-id-0').value = x;
 	document.getElementById('hidden-input-id-1').value = y;
 	document.getElementById('input-01').value = imageWidth;
 	document.getElementById('input-02').value = imageHeight;
+
+	document.getElementById("checkbox-fillwidth").checked = fillWidth;
 
 	document.getElementById('example-unique-id-122').setAttribute('checked', false);
 	document.getElementById('example-unique-id-123').setAttribute('checked', false);
@@ -550,6 +555,8 @@ function loadImage() {
 }
 
 function paintCropper() {
+	console.log("Loading cropper...");
+
 	aspectRatio = document.querySelector('input[name="aspectRatio"]:checked').value;
 	x = parseInt(document.getElementById('hidden-input-id-0').value);
 	y = parseInt(document.getElementById('hidden-input-id-1').value);
@@ -583,12 +590,13 @@ function updateContent() {
 		imageHeight: imageHeight,
 		x: x,
 		y: y,
-		aspectRatio: aspectRatio
+		aspectRatio: aspectRatio,
+		fillWidth: fillWidth
 	});
 }
 
 function onZoom(e) {
-	console.log("Zoom: " + ratio);
+	console.log("Zoom: " + e.detail.ratio);
 }
 
 function onCropEnd(e) {
@@ -626,12 +634,16 @@ function onInputChangeH(e) {
 }
 
 sdk.getData(function (data) {
+	console.log("Getting data from SDK:");
+	console.log(data);
+
 	imageURL = data.imageURL || '';
 	imageWidth = data.imageWidth || 0;
 	imageHeight = data.imageHeight || 0;
 	x = data.x || 0;
 	y = data.y || 0;
 	aspectRatio = data.aspectRatio || 'NaN';
+	fillWidth = data.fillWidth || false;
 	document.getElementById("img-container").hidden = imageURL != '';
 
 	paintSettings();

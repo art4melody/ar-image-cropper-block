@@ -6,6 +6,7 @@ var SDK = require('blocksdk');
 var sdk = new SDK(null, null, true); // 3rd argument true bypassing https requirement: not prod worthy
 
 var imageURL, imageWidth, imageHeight, aspectRatio, x, y;
+var fillWidth = false;
 var image;
 var cropper;
 var options = {
@@ -43,6 +44,8 @@ function paintSettings () {
 	document.getElementById('hidden-input-id-1').value = y;
 	document.getElementById('input-01').value = imageWidth;
 	document.getElementById('input-02').value = imageHeight;
+
+	document.getElementById("checkbox-fillwidth").checked = fillWidth;
 
 	document.getElementById('example-unique-id-122').setAttribute('checked', false);
 	document.getElementById('example-unique-id-123').setAttribute('checked', false);
@@ -89,6 +92,7 @@ function paintCropper() {
 	y = parseInt(document.getElementById('hidden-input-id-1').value);
 	imageWidth = parseInt(document.getElementById('input-01').value);
 	imageHeight = parseInt(document.getElementById('input-02').value);
+	fillWidth = document.getElementById("checkbox-fillwidth").checked;
 
 	if (!imageURL) {
 		return;
@@ -110,14 +114,18 @@ function updateContent() {
 	var imgData = cropper.getCroppedCanvas({
 		imageSmoothingEnabled: false
 	}).toDataURL();
-	sdk.setContent('<img src="' + imgData + '" />');
+	var html = '<img';
+	if (fillWidth) html += ' style="width:100%;height:auto"';
+	html += ' src="' + imgData + '" />';
+	sdk.setContent(html);
 	sdk.setData({
 		imageURL: imageURL,
 		imageWidth: imageWidth,
 		imageHeight: imageHeight,
 		x: x,
 		y: y,
-		aspectRatio: aspectRatio
+		aspectRatio: aspectRatio,
+		fillWidth: fillWidth
 	});
 }
 
@@ -169,10 +177,11 @@ sdk.getData(function (data) {
 	x = data.x || 0;
 	y = data.y || 0;
 	aspectRatio = data.aspectRatio || 'NaN';
+	fillWidth = data.fillWidth || false;
 	document.getElementById("img-container").hidden = imageURL != '';
 
 	paintSettings();
-	paintCropper();
+	loadImage();
 });
 
 [...document.querySelectorAll('input[name="aspectRatio"]')].forEach((button) => {
