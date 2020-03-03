@@ -73,15 +73,17 @@ function paintSettings () {
 }
 
 function loadImage() {
-	imageURL = document.getElementById('text-input-id-0').value;
+	if (!loadingFromSDK) {
+		imageURL = document.getElementById('text-input-id-0').value;
+		x = 0;
+		y = 0;
+	}
+	
 	if (!imageURL) {
 		document.getElementById("img-container").hidden = true;
 		return;
 	}
 	document.getElementById("img-container").hidden = false;
-	
-	x = 0;
-	y = 0;
 	image.setAttribute('src', imageURL);
 }
 
