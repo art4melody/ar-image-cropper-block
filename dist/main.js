@@ -477,16 +477,21 @@ var sdk = new SDK(null, null, true); // 3rd argument true bypassing https requir
 
 var imageURL, imageWidth, imageHeight, aspectRatio, x, y;
 var fillWidth = false;
+var alignCenter = false;
 var image;
 var cropper;
 var options = {
 	aspectRatio: aspectRatio,
-	
+	checkCrossOrigin: false,
 	viewMode: 3,
 	crop: onCrop,
 	zoom: onZoom,
 	cropend: onCropEnd,
+	checkOrientation: false,
 	ready: function(e) {
+		console.log(cropper.getCroppedCanvas({
+			imageSmoothingEnabled: false
+		}));
 		updateContent();
 	}
 };
@@ -517,6 +522,7 @@ function paintSettings () {
 	document.getElementById('input-02').value = imageHeight;
 
 	document.getElementById("checkbox-fillwidth").checked = fillWidth;
+	document.getElementById("checkbox-center").checked = alignCenter;
 
 	document.getElementById('example-unique-id-122').setAttribute('checked', false);
 	document.getElementById('example-unique-id-123').setAttribute('checked', false);
@@ -568,6 +574,7 @@ function paintCropper() {
 	imageWidth = parseInt(document.getElementById('input-01').value);
 	imageHeight = parseInt(document.getElementById('input-02').value);
 	fillWidth = document.getElementById("checkbox-fillwidth").checked;
+	alignCenter = document.getElementById("checkbox-center").checked;
 
 	if (!imageURL) {
 		return;
@@ -599,9 +606,13 @@ function updateContent() {
 	var imgData = cropper.getCroppedCanvas({
 		imageSmoothingEnabled: false
 	}).toDataURL();
-	var html = '<img';
+	var html = '<table width="100%" cellspacing="0" cellpadding="0"><tr><td';
+	if (alignCenter) html += ' align="center"';
+	html += '><img';
 	if (fillWidth) html += ' style="width:100%;height:auto"';
 	html += ' src="' + imgData + '" />';
+	html += '</td></tr></table>';
+
 	var data = {
 		imageURL: imageURL,
 		imageWidth: imageWidth,
@@ -609,7 +620,8 @@ function updateContent() {
 		x: x,
 		y: y,
 		aspectRatio: aspectRatio,
-		fillWidth: fillWidth
+		fillWidth: fillWidth,
+		alignCenter: alignCenter
 	};
 	sdk.setContent(html);
 	sdk.setData(data);
@@ -661,6 +673,11 @@ function onFillWidthInput(e) {
 	updateContent();
 }
 
+function onAlignCenterInput(e) {
+	alignCenter = document.getElementById("checkbox-center").checked;
+	updateContent();
+}
+
 function processSDKData(data) {
 	console.log("Getting data from SDK:");
 	console.log(data);
@@ -672,6 +689,7 @@ function processSDKData(data) {
 	y = data.y || 0;
 	aspectRatio = data.aspectRatio || NaN;
 	fillWidth = data.fillWidth || false;
+	alignCenter = data.alignCenter || false;
 	document.getElementById("img-container").hidden = imageURL != '';
 
 	if (imageURL) loadingFromSDK = true;
@@ -709,6 +727,7 @@ image.onload = function(e) {
 document.getElementById('input-01').onchange = onInputChangeW;
 document.getElementById('input-02').onchange = onInputChangeH;
 document.getElementById("checkbox-fillwidth").onchange = onFillWidthInput;
+document.getElementById("checkbox-center").onchange = onAlignCenterInput;
 
 /*
 // TESTING
@@ -720,7 +739,8 @@ var test_data = {
 	x: 790,
 	y: 207,
 	aspectRatio: 1,
-	fillWidth: true
+	fillWidth: true,
+	alignCenter: true
 };
 
 processSDKData(test_data);

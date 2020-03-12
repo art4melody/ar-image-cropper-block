@@ -28,7 +28,7 @@
 			<div class="slds-form-element">
 				<label class="slds-form-element__label" for="text-input-id-0">Image URL</label>
 				<div class="slds-form-element__control">
-					<input type="text" id="text-input-id-0" name="imageURL" class="slds-input" placeholder="Image URL" />
+					<input type="text" id="text-input-id-0" name="imageURL" class="slds-input" placeholder="https://miro.medium.com/max/2890/1*MDKDf6Cp24W2iejxrpZZBQ.png" />
 				</div>
 			</div>
 			<div class="slds-form-element" style="margin-top:5px;margin-bottom:10px;">
@@ -38,7 +38,7 @@
 			</div>
 			<div class="img-container" id="img-container" style="margin-top:10px;margin-bottom:10px;" hidden=hidden>
 				<div class="slds-form-element__help" id="form-image-help-label">* You can zoom in and zoom out by scrolling</div>
-				<img id="image" src="" />
+				<img id="image" src="" crossorigin="anonymous"/>
 			</div>
 			<fieldset class="slds-form-element">
 				<legend class="slds-form-element__legend slds-form-element__label">Crop Ratio</legend>
@@ -105,6 +105,12 @@
 					  <label class="slds-checkbox__label" for="checkbox-fillwidth">
 						<span class="slds-checkbox_faux"></span>
 						<span class="slds-form-element__label">Scale to Fit</span>
+					  </label>
+
+					  <input type="checkbox" name="options" id="checkbox-center" value="checkbox-center" />
+					  <label class="slds-checkbox__label" for="checkbox-center">
+						<span class="slds-checkbox_faux"></span>
+						<span class="slds-form-element__label">Align Center</span>
 					  </label>
 					</div>
 				  </div>
